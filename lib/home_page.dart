@@ -84,9 +84,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           onPressed: () {
-                            setState(() {
-                              _editePessoas(-1);
-                            });
+                            _editePessoas(-1);
                           },
                         ),
                       )
@@ -97,6 +95,13 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.white,
                           fontWeight: FontWeight.w300,
                           fontSize: 25)),
+                  Divider(),
+                  FloatingActionButton(
+                      backgroundColor: Colors.black,
+                      child: Icon(Icons.auto_delete_outlined),
+                      onPressed: () {
+                        _editePessoas(_pessoas = 0);
+                      })
                 ]),
           ],
         )
