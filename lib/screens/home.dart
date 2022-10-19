@@ -1,6 +1,7 @@
 // ignore: file_names
 
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print, unused_element, unused_import, unused_field
+
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 
@@ -62,13 +63,13 @@ class _HomeState extends State<Home> {
               elevation: 1.0,
               foregroundColor: Colors.blue.shade900,
             ),
-            onPressed: isFull
-                ? null
-                : () {
-                    if (lotacao != 0) {
-                      _controller.clear();
-                    }
-                  },
+            onPressed: () {
+              if (lotacao != 0) {
+                _controller.clear();
+                lotacao = 0;
+                count = 0;
+              }
+            },
             child: Text(
               "Limpar",
               style: TextStyle(fontSize: 18, color: Colors.black),
@@ -200,7 +201,15 @@ class _HomeState extends State<Home> {
                   alignment: Alignment.center,
                   child: AdWidget(ad: _ad!),
                 )
-              : Container()
+              : SizedBox(
+                  width: 300,
+                  height: 50,
+                  child: Center(
+                      child: Text(
+                    'Erro no carregamento do banner',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  )),
+                )
         ],
       ),
     );
@@ -208,8 +217,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _ad?.dispose();
-
     super.dispose();
+    _ad?.dispose();
   }
 }
