@@ -1,6 +1,7 @@
 // ignore: file_names
 
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print, unused_element, unused_import, unused_field
+
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 
@@ -15,10 +16,12 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   BannerAd? _ad;
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _lotacaoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   int lotacao = 0;
   int count = 0;
+
+  //RegExp regexNumber = RegExp("[0-9]");
 
   Widget addLotacao(bool isFull) {
     return Column(
@@ -28,18 +31,16 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(8.0),
           child: TextFormField(
             key: _formKey,
-            onChanged: (value) {
-              setState(() {
-                lotacao = int.parse(value);
-              });
-            },
-            controller: _controller,
+            controller: _lotacaoController,
             decoration: InputDecoration(
-                fillColor: Color(0xff005f05),
-                border: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(4.0))),
-                labelText: "Digite a lotação",
-                labelStyle: TextStyle(color: Colors.white)),
+              border: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(4.0),
+                ),
+              ),
+              labelText: "Digite a lotação",
+              labelStyle: TextStyle(color: Colors.white),
+            ),
             keyboardType: TextInputType.number,
             style: TextStyle(
               fontSize: 20,
@@ -55,28 +56,29 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(8.0),
           child: TextButton(
             style: TextButton.styleFrom(
-              backgroundColor:
-                  isFull ? Colors.white.withOpacity(0.68) : Colors.white,
+              backgroundColor: Colors.white,
               fixedSize: Size(0, 70),
               animationDuration: Duration(seconds: 2),
               elevation: 1.0,
               foregroundColor: Colors.blue.shade900,
             ),
-            onPressed: isFull
-                ? null
-                : () {
-                    if (lotacao != 0) {
-                      _controller.clear();
-                    }
-                  },
+            onPressed: () {
+              setState(() {
+                if (lotacao != 0) {
+                  lotacao = int.parse(_lotacaoController.text);
+                  isFull = false;
+                  _lotacaoController.clear();
+                }
+              });
+            },
             child: Text(
-              "Limpar",
+              "Salvar",
               style: TextStyle(fontSize: 18, color: Colors.black),
             ),
           ),
         ),
         SizedBox(
-          height: 25,
+          height: 10,
         )
       ],
     );
@@ -93,9 +95,6 @@ class _HomeState extends State<Home> {
       count++;
     });
   }
-
-  bool get isEmpty => count == 0;
-  bool get isFull => count == lotacao;
 
   @override
   void initState() {
@@ -120,96 +119,116 @@ class _HomeState extends State<Home> {
     ).load();
   }
 
+  bool get isEmpty => count == 0;
+  bool get isFull => count == lotacao || count > lotacao;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.blue.shade900,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          addLotacao(isFull),
-          Text(
-            isFull ? "Lotado" : "Pode Entrar!",
-            style: TextStyle(
-              color: isFull ? Colors.red.shade200 : Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(18),
-            child: Text(
-              count.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 100,
-              ),
-            ),
-          ),
-          Row(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor:
-                      isEmpty ? Colors.white.withOpacity(0.68) : Colors.white,
-                  fixedSize: const Size(100, 80),
-                  animationDuration: Duration(seconds: 2),
-                  elevation: 5.0,
-                  foregroundColor: Colors.blue.shade900,
+              SizedBox(
+                height: 100,
+              ),
+              addLotacao(isFull),
+              Text(
+                isFull ? "Lotado" : "Pode Entrar!",
+                style: TextStyle(
+                  color: isFull ? Colors.red.shade200 : Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w700,
                 ),
-                onPressed: isEmpty ? null : decrement,
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
                 child: Text(
-                  'Saiu',
+                  count.toString(),
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
+                    color: Colors.white,
+                    fontSize: 100,
                   ),
                 ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: isEmpty
+                          ? Colors.white.withOpacity(0.68)
+                          : Colors.white,
+                      fixedSize: const Size(100, 80),
+                      animationDuration: Duration(seconds: 2),
+                      elevation: 5.0,
+                      foregroundColor: Colors.blue.shade900,
+                    ),
+                    onPressed: isEmpty ? null : decrement,
+                    child: Text(
+                      'Saiu',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 35,
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: isFull
+                          ? Colors.white.withOpacity(0.68)
+                          : Colors.white,
+                      fixedSize: const Size(100, 80),
+                      animationDuration: Duration(seconds: 2),
+                      elevation: 5.0,
+                      foregroundColor: Colors.blue.shade900,
+                    ),
+                    onPressed: isFull ? null : increment,
+                    child: Text(
+                      'Entrou',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  )
+                ],
               ),
               SizedBox(
-                width: 35,
+                height: 55,
               ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor:
-                      isFull ? Colors.white.withOpacity(0.68) : Colors.white,
-                  fixedSize: const Size(100, 80),
-                  animationDuration: Duration(seconds: 2),
-                  elevation: 5.0,
-                  foregroundColor: Colors.blue.shade900,
-                ),
-                onPressed: isFull ? null : increment,
-                child: Text(
-                  'Entrou',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                  ),
-                ),
-              )
+              _ad != null
+                  ? Container(
+                      width: _ad!.size.width.toDouble(),
+                      height: 72,
+                      alignment: Alignment.center,
+                      child: AdWidget(ad: _ad!),
+                    )
+                  : SizedBox(
+                      width: 300,
+                      height: 50,
+                      child: Center(
+                          child: Text(
+                        'Erro no carregamento do banner',
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      )),
+                    )
             ],
           ),
-          SizedBox(
-            height: 55,
-          ),
-          _ad != null
-              ? Container(
-                  width: _ad!.size.width.toDouble(),
-                  height: 72,
-                  alignment: Alignment.center,
-                  child: AdWidget(ad: _ad!),
-                )
-              : Container()
-        ],
+        ),
       ),
     );
   }
 
   @override
   void dispose() {
-    _ad?.dispose();
-
     super.dispose();
+    _ad?.dispose();
   }
 }
